@@ -1,10 +1,25 @@
 package com.vava.bean;
 
+import org.springframework.beans.factory.annotation.Value;
+
 /**
  */
 public class Person {
+    @Value("张三")
     private String name;
+    @Value("#{20-1}")
     private Integer age;
+
+    @Value("${person.nickName}")
+    private String nickName;
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
 
     public String getName() {
         return name;
@@ -27,6 +42,7 @@ public class Person {
         return "Person{" +
                 "name='" + name + '\'' +
                 ", age=" + age +
+                ", nickName='" + nickName + '\'' +
                 '}';
     }
 
