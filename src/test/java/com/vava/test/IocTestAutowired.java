@@ -3,6 +3,9 @@ package com.vava.test;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import com.vava.bean.Boss;
+import com.vava.bean.Car;
+import com.vava.bean.Color;
 import com.vava.bean.Person;
 import com.vava.conf.MainConfigOfAutowired;
 import com.vava.conf.MainConfigOfPropertyValues;
@@ -19,9 +22,17 @@ public class IocTestAutowired {
     @Test
     public void test01() {
         System.out.println("############");
-        BookService bookService = (BookService) applicationContext.getBean(BookService.class);
+        BookService bookService = applicationContext.getBean(BookService.class);
         System.out.println(bookService);
         bookService.print();
+
+        Boss boss = applicationContext.getBean(Boss.class);
+        System.out.println(boss);
+        Car car = applicationContext.getBean(Car.class);
+        System.out.println(car);
+        Color color = applicationContext.getBean(Color.class);
+        System.out.println(color);
+        System.out.println("IoC容器：" + applicationContext);
 
 
 

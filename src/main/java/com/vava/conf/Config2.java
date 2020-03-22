@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Lazy;
 import com.vava.bean.Color;
 import com.vava.bean.ColorFactoryBean;
 import com.vava.bean.Person;
+import com.vava.bean.Person.Sex;
 import com.vava.bean.Red;
 import com.vava.condition.LinuxCondition;
 import com.vava.condition.MacOsCondition;
@@ -25,7 +26,7 @@ public class Config2 {
     @Lazy
     public Person personInConfQitian() {
         System.out.println("给容器增加齐天bean");
-        return new Person("qitain", 2);
+        return new Person("qitain", 2, Sex.MALE);
     }
 
     @Bean("vava")

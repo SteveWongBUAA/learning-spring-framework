@@ -1,14 +1,25 @@
 package com.vava.bean;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 
 /**
+ *
  */
 public class Person {
     @Value("张三")
     private String name;
     @Value("#{20-1}")
     private Integer age;
+
+    public enum Sex {
+        MALE,
+        FEMAILE
+    }
+
+    private Sex sex;
 
     @Value("${person.nickName}")
     private String nickName;
@@ -42,8 +53,15 @@ public class Person {
         return "Person{" +
                 "name='" + name + '\'' +
                 ", age=" + age +
+                ", sex=" + sex +
                 ", nickName='" + nickName + '\'' +
                 '}';
+    }
+
+    public Person(String name, Integer age, Sex sex) {
+        this.name = name;
+        this.age = age;
+        this.sex = sex;
     }
 
     public Person(String name, Integer age) {
@@ -52,5 +70,13 @@ public class Person {
     }
 
     public Person() {
+    }
+
+    public static List<Person> getPersons() {
+        return Arrays.asList(
+                new Person("张三", 20, Sex.MALE),
+                new Person("李四", 30, Sex.MALE),
+                new Person("王小花", 40, Sex.FEMAILE)
+        );
     }
 }

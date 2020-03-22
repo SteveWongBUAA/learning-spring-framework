@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 
 import com.vava.bean.Person;
+import com.vava.bean.Person.Sex;
 
 /**
  *
@@ -20,6 +21,6 @@ import com.vava.bean.Person;
 public class Config {
     @Bean
     public Person personInConf() {
-        return new Person("vava", 2);
+        return new Person("vava", 2, Sex.FEMAILE);
     }
 }
