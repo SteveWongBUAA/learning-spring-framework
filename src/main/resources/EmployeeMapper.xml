@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vava.mybatis.mapper.EmployeeMapper">
+
+    <!--
+    namespace:指定为接口的全类名
+     -->
+    <select id="getEmployeeById" parameterType="Integer" resultType="com.vava.mybatis.bean.Employee">
+        select id, last_name lastName, gender, email from tbl_employee where id = #{id}
+    </select>
+    <insert id="addEmployee" useGeneratedKeys="true" keyProperty="id">
+        insert into tbl_employee (last_name, gender, email) VALUES (#{lastName}, #{gender}, #{email})
+    </insert>
+    <update id="updateEmployee">
+        update tbl_employee set last_name = #{lastName}, gender = #{gender}, email = #{email} where id = #{id}
+    </update>
+    <delete id="delEmployeeById">
+        delete from tbl_employee where id = #{id}
+    </delete>
+
+</mapper>
