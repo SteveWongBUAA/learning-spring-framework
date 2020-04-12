@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.vava.bean.Blue;
 import com.vava.bean.RealtimeCallCommandPayload;
 import com.vava.bean.Request;
 import com.vava.json.TestParam;
@@ -110,6 +111,22 @@ public class LogicTest {
         iterator1.next();
         iterator1.remove();
         iterator2.next(); // 运行结果？
+    }
+
+    @Test
+    public void testInt() {
+        int a;
+        int b;
+        int c = 3;
+        Blue blue = new Blue();
+        System.out.println(c);
+        System.out.println("before change" + blue);
+        changeObject(blue);
+        System.out.println("after change" + blue);
+    }
+
+    private void changeObject(Blue blue) {
+        blue.setA(123);
     }
 
 }
