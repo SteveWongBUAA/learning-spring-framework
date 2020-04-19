@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 import org.junit.Assert;
@@ -127,6 +128,9 @@ public class LogicTest {
 
     private void changeObject(Blue blue) {
         blue.setA(123);
+    }
+
+    private void testConcurrentHashMap() {
     }
 
 }
