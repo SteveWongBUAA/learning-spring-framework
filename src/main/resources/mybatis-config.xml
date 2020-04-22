@@ -27,6 +27,7 @@
 
     <mappers>
         <mapper resource="EmployeeMapper.xml"/>
+        <mapper resource="DepartmentMapper.xml"/>
         <mapper class="com.vava.mybatis.mapper.EmployeeMapperAnnotation"/>
     </mappers>
 

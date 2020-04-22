@@ -5,17 +5,32 @@
     <!--
     namespace:指定为接口的全类名
      -->
-    <select id="getEmployeeById" parameterType="Integer" resultType="com.vava.mybatis.bean.Employee">
-        select id, last_name lastName, gender, email from tbl_employee where id = #{id}
+
+    <resultMap id="employeeResult" type="com.vava.mybatis.bean.EmployeeRepo">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="parent_department_id" property="parentDepartmentId"/>
+        <result column="email" property="email"/>
+        <result column="gender" property="gender"/>
+    </resultMap>
+
+    <select id="getEmployeeById" parameterType="Integer" resultType="com.vava.mybatis.bean.EmployeeRepo">
+        select id, name lastName, gender, email from tbl_employee where id = #{id}
     </select>
     <insert id="addEmployee" useGeneratedKeys="true" keyProperty="id">
-        insert into tbl_employee (last_name, gender, email) VALUES (#{lastName}, #{gender}, #{email})
+        insert into tbl_employee (name, gender, email) VALUES (#{lastName}, #{gender}, #{email})
     </insert>
     <update id="updateEmployee">
-        update tbl_employee set last_name = #{lastName}, gender = #{gender}, email = #{email} where id = #{id}
+        update tbl_employee set name = #{lastName}, gender = #{gender}, email = #{email} where id = #{id}
     </update>
     <delete id="delEmployeeById">
         delete from tbl_employee where id = #{id}
     </delete>
+
+    <select id="getDepartmentEmployees" parameterType="Long" resultMap="employeeResult">
+        select id, parent_department_id, name
+        from tbl_employee
+        where parent_department_id = #{id}
+    </select>
 
 </mapper>

@@ -8,7 +8,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
-import com.vava.mybatis.bean.Employee;
+import com.vava.mybatis.bean.EmployeeRepo;
 import com.vava.mybatis.mapper.EmployeeMapper;
 import com.vava.mybatis.mapper.EmployeeMapperAnnotation;
 
@@ -36,27 +36,23 @@ public class MybatisApplication {
         try {
             // 通过xml配置
             EmployeeMapper employeeMapper = sqlSession.getMapper(EmployeeMapper.class);
-            Employee employee = employeeMapper.getEmployeeById(1);
-            System.out.println(employee);
+            EmployeeRepo employeeRepo = employeeMapper.getEmployeeById(1);
+            System.out.println(employeeRepo);
             // 通过注解配置
             EmployeeMapperAnnotation employeeMapperAnnotation = sqlSession.getMapper(EmployeeMapperAnnotation.class);
-            employee = employeeMapperAnnotation.getEmployeeByName("tom");
-            System.out.println(employee);
-            employee = employeeMapperAnnotation.getEmployeeByName("tom");
-            System.out.println(employee);
-            employee = employeeMapperAnnotation.getEmployeeByName("tom");
-            System.out.println(employee);
+            employeeRepo = employeeMapperAnnotation.getEmployeeByName("tom");
+            System.out.println(employeeRepo);
+            employeeRepo = employeeMapperAnnotation.getEmployeeByName("tom");
+            System.out.println(employeeRepo);
+            employeeRepo = employeeMapperAnnotation.getEmployeeByName("tom");
+            System.out.println(employeeRepo);
 
-            employee.setEmail("xxx@xxx.com");
-            employee.setGender("0");
-            employee.setLastName("vava");
-            int ret = employeeMapper.addEmployee(employee);
-            System.out.println("add employee: " + ret + " id = " + employee.getId());
+            int ret = employeeMapper.addEmployee(employeeRepo);
+            System.out.println("add employee: " + ret + " id = " + employeeRepo.getId());
             sqlSession.commit();
 
-            employee.setId(2);
-            employee.setLastName("updateName");
-            ret = employeeMapper.updateEmployee(employee);
+            employeeRepo.setId(2);
+            ret = employeeMapper.updateEmployee(employeeRepo);
             System.out.println("update employee: " + ret);
             sqlSession.commit();
 

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vava.mybatis.mapper.DepartmentMapper">
+
+    <!--
+    namespace:指定为接口的全类名
+     -->
+
+    <resultMap id="departmentResult" type="com.vava.mybatis.bean.DepartmentRepo">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="parent_department_id" property="parentDepartmentId" />
+    </resultMap>
+
+    <select id="existTable" parameterType="String" resultType="Integer">
+        select count(*)
+        from information_schema.TABLES
+        where LCASE(table_name)=#{tableName}
+    </select>
+
+    <update id="dropTable">
+        DROP TABLE IF EXISTS ${tableName}
+    </update>
+
+    <update id="createNewTable">
+        CREATE TABLE departments (
+          id int(20) NOT NULL AUTO_INCREMENT,
+          parent_department_id int(20),
+          name varchar(255) DEFAULT NULL,
+          PRIMARY KEY (id))
+    </update>
+
+    <insert id="insert" parameterType="com.vava.mybatis.bean.DepartmentRepo">
+        insert into departments
+        (id,parent_department_id,name)
+        values
+        (#{id},
+        #{parentDepartmentId},
+        #{name})
+    </insert>
+
+    <select id="selectSubDepartments" parameterType="Long" resultMap="departmentResult">
+        select *
+        from departments
+        where parent_department_id = #{parentDepartmentId}
+    </select>
+
+
+
+</mapper>

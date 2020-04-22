@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import org.junit.Assert;
@@ -130,7 +130,15 @@ public class LogicTest {
         blue.setA(123);
     }
 
-    private void testConcurrentHashMap() {
+    @Test
+    public void testStream() {
+        Long size = 1000000l;
+        Map<String, String> map = new HashMap<>();
+        List<String> list = new ArrayList<>();
+        for (long i = 0; i < size; i++) {
+            list.add(UUID.randomUUID().toString());
+        }
+        list.parallelStream().forEach(node -> map.put(node, node));
     }
 
 }
