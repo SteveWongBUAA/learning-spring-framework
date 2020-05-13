@@ -1,20 +1,28 @@
 package com.vava.test;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.UUID;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.cglib.beans.BeanMap;
 
 import com.vava.bean.Blue;
 import com.vava.bean.RealtimeCallCommandPayload;
 import com.vava.bean.Request;
 import com.vava.json.TestParam;
+import com.vava.net.tokens.OperatorEnum;
 
 /**
  * @author steve
@@ -87,8 +95,8 @@ public class LogicTest {
 
     @Test
     public void testRegex() {
-        Assert.assertTrue(isAllDigit("123122345"));
-        Assert.assertTrue(isAllDigit("1"));
+        assertTrue(isAllDigit("123122345"));
+        assertTrue(isAllDigit("1"));
         Assert.assertFalse(isAllDigit(""));
         Assert.assertFalse(isAllDigit("1238azzzze11"));
         Assert.assertFalse(isAllDigit("zhcdiusaf"));
@@ -139,6 +147,105 @@ public class LogicTest {
             list.add(UUID.randomUUID().toString());
         }
         list.parallelStream().forEach(node -> map.put(node, node));
+    }
+
+    @Test
+    public void testThreadLocal() {
+        //        ThreadLocal<String> tl = new ThreadLocal<>();
+        //        tl.set("qwer");
+        //        tl.get();
+
+        ThreadLocal<Integer> tl2 = new ThreadLocal<>();
+        tl2.set(2);
+        tl2.get();
+        WeakReference<ThreadLocal<Integer>> weakReference = new WeakReference<>(tl2);
+        System.out.println(weakReference.get());
+        System.gc();
+        System.out.println(weakReference.get());
+        //
+        Thread t1 = Thread.currentThread();
+        tl2 = null;
+        // 但是实际上map里还有引用
+
+        System.gc();
+        System.out.println(weakReference.get());
+
+        Stack<Integer> s = new Stack<>();
+
+    }
+
+    @Test
+    public void testCompletableFuture() {
+    }
+
+    @Test
+    public void testString() {
+        String s = "[阿凡达]";
+        char a = s.charAt(2);
+        System.out.println(a);
+    }
+
+
+
+    public int majorityElement(int[] nums) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            int val = map.getOrDefault(nums[i], 0) + 1;
+            map.put(nums[i], val);
+
+            if (map.get(nums[i]) > (nums.length / 2)) {
+                return nums[i];
+            }
+        }
+        return -1;
+    }
+
+    static class MyThreadLocalMap {
+
+        private MyEntry[] table;
+
+        static class MyEntry extends WeakReference<ThreadLocal<?>> {
+            Object value;
+
+            MyEntry(ThreadLocal<?> k, Object v) {
+                super(k);
+                value = v;
+            }
+        }
+    }
+
+    public int hammingDistance(int x, int y) {
+        int res = x ^ y;
+        int cnt = 0;
+        while (res != 0) {
+            if ((res & 1) == 1) {
+                cnt ++;
+            }
+            res =  res >> 1;
+
+        }
+        return cnt;
+    }
+
+    @Test
+    public void tt() {
+//        int a = hammingDistance(1,3);
+//        System.out.println(a);
+//        String a = null;
+//        System.out.println(a.toString());
+        Map<Object, Object> map = new HashMap<>();
+        String a = null;
+        String b = "ok";
+        map.put(a, b);
+        System.out.println(map);
+        System.out.println(map.get(null));
+        BeanMap beanMap = BeanMap.create(new Blue());
+        System.out.println(beanMap);
+        System.out.println(beanMap.get("c"));
+
+        Object o = null;
+        String sv = String.valueOf(o);
+        System.out.println("ooo:" + sv + ":xxxxxxx:"+sv.charAt(0));
     }
 
 }
