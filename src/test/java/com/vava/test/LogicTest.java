@@ -1,28 +1,25 @@
 package com.vava.test;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.UUID;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.cglib.beans.BeanMap;
 
 import com.vava.bean.Blue;
 import com.vava.bean.RealtimeCallCommandPayload;
 import com.vava.bean.Request;
 import com.vava.json.TestParam;
-import com.vava.net.tokens.OperatorEnum;
 
 /**
  * @author steve
@@ -30,6 +27,18 @@ import com.vava.net.tokens.OperatorEnum;
 public class LogicTest {
 
     private static final int DEFAULT_EVENTBUS_THREAD_NUMBER = 2;
+    static Map<Character, List<Character>> map = new HashMap<>();
+
+    static {
+        map.put('2', Arrays.asList('a', 'b', 'c'));
+        map.put('3', Arrays.asList('d', 'e', 'f'));
+        map.put('4', Arrays.asList('g', 'h', 'i'));
+        map.put('5', Arrays.asList('j', 'k', 'l'));
+        map.put('6', Arrays.asList('m', 'n', 'o'));
+        map.put('7', Arrays.asList('q', 'p', 'r', 's'));
+        map.put('8', Arrays.asList('t', 'u', 'v'));
+        map.put('9', Arrays.asList('w', 'x', 'y', 'z'));
+    }
 
     @Test
     public void test01() {
@@ -185,8 +194,6 @@ public class LogicTest {
         System.out.println(a);
     }
 
-
-
     public int majorityElement(int[] nums) {
         Map<Integer, Integer> map = new HashMap<>();
         for (int i = 0; i < nums.length; i++) {
@@ -198,6 +205,64 @@ public class LogicTest {
             }
         }
         return -1;
+    }
+
+    public int hammingDistance(int x, int y) {
+        int res = x ^ y;
+        int cnt = 0;
+        while (res != 0) {
+            if ((res & 1) == 1) {
+                cnt++;
+            }
+            res = res >> 1;
+
+        }
+        return cnt;
+    }
+
+    @Test
+    public void tt() {
+        //        int a = hammingDistance(1,3);
+        //        System.out.println(a);
+        //        String a = null;
+        //        System.out.println(a.toString());
+        //        Map<Object, Object> map = new HashMap<>();
+        //        String a = null;
+        //        String b = "ok";
+        ////        map.put(a, b);
+        //        System.out.println(map);
+        //        System.out.println(map.get(null));
+        //        BeanMap beanMap = BeanMap.create(new Blue());
+        //        System.out.println(beanMap);
+        //        System.out.println(beanMap.get("c"));
+        //
+        //        Object o = null;
+        //        String sv = String.valueOf(o);
+        //        System.out.println("ooo:" + sv + ":xxxxxxx:"+sv.charAt(0));
+
+
+        List<String> res = new ArrayList<>();
+        putChar("", "23", 0, res);
+        System.out.println(res);
+
+
+    }
+
+    /**
+     * 处理到s的第i个字符，把可能的char放进tmpres。
+     */
+    private void putChar(String tmpres, String s, int i, List<String> res) {
+        if (i == s.length()) {
+            res.add(tmpres);
+            return;
+        }
+        Character c = s.charAt(i);
+        List<Character> characters = map.get(c);
+        for (Character c1 : characters) {
+            tmpres += c1;
+            putChar(tmpres, s, i + 1, res);
+            tmpres = tmpres.substring(0, tmpres.length() - 1);
+        }
     }
 
     static class MyThreadLocalMap {
@@ -212,40 +277,6 @@ public class LogicTest {
                 value = v;
             }
         }
-    }
-
-    public int hammingDistance(int x, int y) {
-        int res = x ^ y;
-        int cnt = 0;
-        while (res != 0) {
-            if ((res & 1) == 1) {
-                cnt ++;
-            }
-            res =  res >> 1;
-
-        }
-        return cnt;
-    }
-
-    @Test
-    public void tt() {
-//        int a = hammingDistance(1,3);
-//        System.out.println(a);
-//        String a = null;
-//        System.out.println(a.toString());
-        Map<Object, Object> map = new HashMap<>();
-        String a = null;
-        String b = "ok";
-        map.put(a, b);
-        System.out.println(map);
-        System.out.println(map.get(null));
-        BeanMap beanMap = BeanMap.create(new Blue());
-        System.out.println(beanMap);
-        System.out.println(beanMap.get("c"));
-
-        Object o = null;
-        String sv = String.valueOf(o);
-        System.out.println("ooo:" + sv + ":xxxxxxx:"+sv.charAt(0));
     }
 
 }
