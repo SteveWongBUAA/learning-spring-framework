@@ -65,7 +65,7 @@ public class MybatisApplication {
         }
     }
 
-    private static SqlSessionFactory getSqlSessionFactory() throws IOException {
+    public static SqlSessionFactory getSqlSessionFactory() throws IOException {
         // 根据xml配置文件创建一个SqlSessionFactory对象
         String resource = "mybatis-config.xml";
         InputStream inputStream = Resources.getResourceAsStream(resource);

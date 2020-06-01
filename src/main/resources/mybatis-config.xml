@@ -29,6 +29,7 @@
         <mapper resource="EmployeeMapper.xml"/>
         <mapper resource="DepartmentMapper.xml"/>
         <mapper class="com.vava.mybatis.mapper.EmployeeMapperAnnotation"/>
+        <mapper class="com.vava.distlock.DistLockMapper"/>
     </mappers>
 
 </configuration>

@@ -9,8 +9,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Stack;
 import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Pattern;
 
 import org.junit.Assert;
@@ -277,6 +281,10 @@ public class LogicTest {
                 value = v;
             }
         }
+    }
+
+    @Test
+    public void testRingBuffer() {
     }
 
 }
