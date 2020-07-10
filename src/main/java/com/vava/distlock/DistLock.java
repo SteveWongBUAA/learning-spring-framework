@@ -31,33 +31,66 @@ public class DistLock {
             nodeInfo = "xxx";
             e.printStackTrace();
         }
-        //        nodeInfo += ("_" + Thread.currentThread().getId());
-        nodeInfo += ("_" + (int) (Math.random() * 10));
+        nodeInfo += ("_" + (int) (Math.random() * 1));
         try {
             boolean lock = distLock.lock(resoureName, nodeInfo);
             if (lock) {
                 System.out.println(">>>>>> node: " + nodeInfo + " getLock! ");
+                System.out.flush();
                 Thread.sleep((int) (Math.random() * 100));
                 System.out.println(">>>>>> node: " + nodeInfo + " do something done! ");
+                System.out.flush();
             } else {
                 System.out.println("node: " + nodeInfo + " failed to getLock! ");
+                System.out.flush();
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         } finally {
             try {
-                boolean unlock = distLock.unlock(resoureName, nodeInfo);
-                System.out.println("node: " + nodeInfo + " unlock!: " + unlock);
+                distLock.unlock(resoureName, nodeInfo);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     };
 
-    public static void main(String[] args) throws InterruptedException {
+    final static Runnable testUpdate = () -> {
+        String resoureName = "testDistLock";
+        DistLock distLock = new DistLock();
+        String nodeInfo;
+        try {
+            nodeInfo = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            nodeInfo = "xxx";
+            e.printStackTrace();
+        }
+        nodeInfo += ("_" + (int) (Math.random() * 1));
+        try {
+            boolean lock = distLock.lock(resoureName, nodeInfo);
+            if (lock) {
+                System.out.println(">>>>>> node: " + nodeInfo + " getLock! ");
+                System.out.flush();
+                Thread.sleep((int) (Math.random() * 100));
+                System.out.println(">>>>>> node: " + nodeInfo + " do something done! ");
+                System.out.flush();
+            } else {
+                System.out.println("node: " + nodeInfo + " failed to getLock! ");
+                System.out.flush();
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    };
+
+    public static void main(String[] args) throws InterruptedException, IOException {
+
+
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         for (int i = 0; i < 100; i++) {
             executorService.submit(task);
+            //            executorService.submit(testUpdate);
         }
 
         executorService.shutdown();
@@ -93,7 +126,11 @@ public class DistLock {
             }
             if (lock.getNodeInfo().equals(nodeInfo)) {
                 // 是自己写入的，可重入
-                System.out.println(">>>>>>> node: " + nodeInfo + " get the lock again! ");
+                distLockMapper.reentrantLock(resourceName, nodeInfo);
+                sqlSession.commit();
+                System.out.println(
+                        "############################## node: " + nodeInfo + " reentrant get the lock again! ");
+                System.out.flush();
                 return true;
             } else {
                 // 是别人写入的，获取锁失败
@@ -104,27 +141,36 @@ public class DistLock {
         }
     }
 
-    public boolean unlock(String resourceName, String nodeInfo) throws IOException {
+    public void unlock(String resourceName, String nodeInfo) throws IOException {
         SqlSessionFactory sqlSessionFactory = MybatisApplication.getSqlSessionFactory();
         // 获取sqlSession实例
         SqlSession sqlSession = sqlSessionFactory.openSession();
         try {
             // 通过注解配置
             DistLockMapper distLockMapper = sqlSession.getMapper(DistLockMapper.class);
-            int ret = distLockMapper.deleteLock(resourceName, nodeInfo);
-            //            System.out.println("node: " + nodeInfo + " unlock!, ret = " + ret);
+            int ret = distLockMapper.exitLock(resourceName, nodeInfo);
+            sqlSession.commit();
             if (ret == 1) {
-                sqlSession.commit();
-                return true;
+                System.out.println(">>>>>>> node: " + nodeInfo + " exit lock: count - 1, succeeded ! ");
+                System.out.flush();
             } else {
-                return false;
+                System.out.println(">>>>>>> node: " + nodeInfo + " exit lock: count - 1, failed! ");
+                System.out.flush();
+            }
+            distLockMapper.deleteLock(resourceName, nodeInfo);
+            sqlSession.commit();
+            if (ret == 1) {
+                System.out.println(">>>>>>> node: " + nodeInfo + " delete lock succeeded ! ");
+                System.out.flush();
+            } else {
+                System.out.println("node: " + nodeInfo + " delete lock failed ! ");
+                System.out.flush();
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             sqlSession.close();
         }
-        return false;
     }
 
 

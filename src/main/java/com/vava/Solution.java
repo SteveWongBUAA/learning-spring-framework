@@ -4,68 +4,84 @@ package com.vava;
 /**
  * @author Steve
  * Created on 2020-05
- *     这种需要先看例子找规律，观察几个例子：
- *     1.如果结尾是升序，如 123，那好办得很，直接将最后两位交换，132，搞定
- *     2.如果是纯逆序，如 321，需要整体翻转，123
- *     3.如果先升后降，如 12321，就有点麻烦了，我们感觉应该要找到转折点 12|3|21，然后需要将第一个2，替换掉。替换成啥呢？为了保证题意，应该是他后面的，在他后面一个位置的，也就是3，替换后：13|221
- *     ，需要再把后面的221升序排起来，13122
- *     4.如果反复横跳，升降升降的，如 13|5|2|4|1，发现跟3类似，只要处理最后一次先升后降，也就是241，将2替换成4，然后升序排，135412。
- *
- *     于是大概的我们可以总结算法：
- *     1、找到最后一个升-》降
- *     2、替换，然后后面升序排序。
- *
- *
- *
  */
 class Solution {
-    public void nextPermutation(int[] nums) {
-        int toSwap = findToSwapIndex(nums);
-        if (toSwap == -1) {
-            // 纯升序
-            reverse(nums, 0);
-            return;
-        }
-        // 后往前 找第一个大于 要交换的元素
-        for (int i = nums.length-1; i > toSwap; i--) {
-            if (nums[i] > nums[toSwap]) {
-                swap(nums, i, toSwap);
-                // 交换后面的位置，升序排列，也就是翻转
-                reverse(nums, toSwap+1);
-                return;
-            }
-        }
-        //如果没有找到可以交换的，说明是纯升序，需要全体翻转
-        reverse(nums, toSwap);
+    public static void main(String[] args) {
+        Solution s = new Solution();
+        int[] arr = {1, 3, 5, 7, 9};
+        int lastLessEqual = s.findLastLessEqual(arr, 1);
+        System.out.println(arr[lastLessEqual] + " 1");
+
+        lastLessEqual = s.findLastLessEqual(arr, 2);
+        System.out.println(arr[lastLessEqual] + " 1");
+
+        lastLessEqual = s.findLastLessEqual(arr, 3);
+        System.out.println(arr[lastLessEqual] + " 3");
+
+        lastLessEqual = s.findLastLessEqual(arr, 4);
+        System.out.println(arr[lastLessEqual] + " 3");
+
+        lastLessEqual = s.findLastLessEqual(arr, 5);
+        System.out.println(arr[lastLessEqual] + " 5");
+
+        lastLessEqual = s.findLastLessEqual(arr, 9);
+        System.out.println(arr[lastLessEqual] + " 9");
+
+        lastLessEqual = s.findLastLessEqual(arr, 10);
+        System.out.println(arr[lastLessEqual] + " 9");
+
+        //        int [][] a=new int[][]{{1,4,7,11,15},{2,5,8,12,19},{3,6,9,16,22},{10,13,14,17,24},{18,21,23,26,30}};
+        int[][] a = new int[][] {{1, 2, 3, 4, 5}, {6, 7, 8, 9, 10}, {11, 12, 13, 14, 15}, {16, 17, 18, 19, 20},
+                {21, 22, 23, 24, 25}};
+        s.searchMatrix(a, 19);
     }
 
+    public boolean searchMatrix(int[][] matrix, int target) {
+        // 先横着找找到最后一个小于等于target的
+        int idx = findLastLessEqual(matrix[0], target);
+        if (idx == -1) {
+            return false;
+        }
+        if (matrix[0][idx] == target) {
+            return true;
+        }
 
-    private int findToSwapIndex(int[] nums) {
-        for (int j = nums.length - 1; j > 0; j--) {
-            // 想要交换的元素
-            if (nums[j-1] < nums[j]) {
-                return j - 1;
+        // 在这一列竖着找
+        return find(matrix, idx, target);
+    }
+
+    public int findLastLessEqual(int[] row, int target) {
+        int start = 0;
+        int end = row.length - 1;
+        while (start <= end) {
+            int mid = (end + start) / 2;
+            if (row[mid] == target) {
+                return mid;
+            } else if (row[mid] < target) {
+                if (mid == row.length - 1 || row[mid + 1] > target) {
+                    return mid;
+                }
+                start = mid + 1;
+            } else {
+                end = mid - 1;
             }
         }
-        // 找不到，返回
         return -1;
-
     }
 
-    private void swap(int[] nums, int i, int j) {
-        int tmp = nums[i];
-        nums[i] = nums[j];
-        nums[j] = tmp;
-    }
-
-    private void reverse(int[] nums, int start) {
-        int end = nums.length - 1;
-        while (start < end) {
-            swap(nums, start, end);
-            start++;
-            end--;
+    public boolean find(int[][] matrix, int idx, int target) {
+        int start = 0;
+        int end = matrix.length - 1;
+        while (start <= end) {
+            int mid = (end + start) / 2;
+            if (matrix[mid][idx] == target) {
+                return true;
+            } else if (matrix[mid][idx] < target) {
+                start = mid + 1;
+            } else {
+                end = mid - 1;
+            }
         }
+        return false;
     }
-
-
 }

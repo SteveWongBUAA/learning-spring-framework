@@ -3,27 +3,44 @@ package com.vava.test;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Type;
+import java.text.DateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.Queue;
+import java.util.Set;
 import java.util.Stack;
 import java.util.UUID;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Pattern;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.util.StringUtils;
 
+import com.google.common.util.concurrent.RateLimiter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.vava.bean.Blue;
 import com.vava.bean.RealtimeCallCommandPayload;
 import com.vava.bean.Request;
+import com.vava.dao.Message;
 import com.vava.json.TestParam;
+import com.vava.utils.LocalDateAdapter;
 
 /**
  * @author steve
@@ -269,6 +286,57 @@ public class LogicTest {
         }
     }
 
+    @Test
+    public void testArr() {
+        List<int[]> res = new ArrayList<>();
+        res.add(new int[] {1, 2});
+        res.add(new int[] {3, 4, 6});
+        int[][] ints = res.toArray(new int[0][]);
+        int[][] test = new int[0][];
+    }
+
+    @Test
+    public void testSmoothBursty() throws InterruptedException {
+        RateLimiter r = RateLimiter.create(2);
+        Long time = System.currentTimeMillis();
+        while (true) {
+            boolean b = r.tryAcquire();
+            if (b) {
+                Long diff = System.currentTimeMillis() - time;
+                time = System.currentTimeMillis();
+                System.out.println("get 1 tokens: " +  diff);
+            }
+//            Thread.sleep(100);
+        }
+    }
+
+    public void acquireThread(RateLimiter r) {
+        double acquire = r.acquire();
+        System.out.println("get 1 tokens: " +  acquire);
+    }
+
+    @Test
+    public void testAcquire() throws InterruptedException {
+        RateLimiter r = RateLimiter.create(2);
+        for (int i = 0; i < 20; i++) {
+            new Thread(() -> acquireThread(r)).start();
+            //            double acquire = r.acquire();
+//            System.out.println("get 1 tokens: " +  acquire);
+        }
+        System.out.println("loop end already!!");
+        Thread.sleep(10000);
+    }
+
+    @Test
+    public void testSort() {
+        List<String> res = new ArrayList<>();
+        res.add("asdf");
+        res.add("a");
+        res.add("as");
+        res.sort((a, b) -> b.length() - a.length());
+        System.out.println(res);
+    }
+
     static class MyThreadLocalMap {
 
         private MyEntry[] table;
@@ -284,7 +352,31 @@ public class LogicTest {
     }
 
     @Test
-    public void testRingBuffer() {
+    public void testComputeIfAbs(){
+        Map<Integer, Set<Integer>> map = new HashMap<>();
+        map.computeIfAbsent(2, (key)->new HashSet<>());
+
+    }
+
+    final static class LocalDateTimeAdapter implements JsonSerializer<LocalDateTime> {
+        @Override
+        public JsonElement serialize(LocalDateTime date, Type typeOfSrc, JsonSerializationContext context) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.US);
+            return new JsonPrimitive(date.format(formatter));
+        }
+    }
+
+    @Test
+    public void testGson() {
+
+        // serializer
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .create();
+
+        String json = gson.toJson(Message.ok());
+        System.out.println(json);
+
     }
 
 }
