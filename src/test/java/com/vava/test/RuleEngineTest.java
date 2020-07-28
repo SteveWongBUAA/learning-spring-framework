@@ -1,13 +1,18 @@
 package com.vava.test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.ql.util.express.DefaultContext;
 import com.ql.util.express.ExpressRunner;
+import com.ql.util.express.InstructionSet;
 import com.vava.qlexpress.ApplicationVisibleRule;
 import com.vava.qlexpress.Employee;
 import com.vava.qlexpress.QLExpression;
@@ -39,12 +44,20 @@ public class RuleEngineTest {
         //                + "|| ((e.natureCode == '正式员工') && (e.type in ('一线员工','三线员工')))";
         express = "((e.workPlace == '北京五道口') && !(e.department in ('效率工程部'))) \n"
                 + "|| ((e.natureCode == '正式员工') && (e.type in ('一线员工','三线员工')))";
-        Object r = runner.execute(express, context, null, false, false);
-        System.out.println("################# employee: " + e.toString() + " res: " + r);
 
-        e.setDepartment("商业化");
-        r = runner.execute(express, context, null, false, false);
-        System.out.println("################# employee: " + e.toString() + " res: " + r);
+        String[] outVarNames = runner.getOutVarNames(express);
+        InstructionSet instructionSet = runner.parseInstructionSet(express);
+        System.out.println(instructionSet);
+
+        for (String i: outVarNames) {
+            System.out.println(i);
+        }
+        Object r = runner.execute(express, context, null, false, false);
+//        System.out.println("################# employee: " + e.toString() + " res: " + r);
+
+//        e.setDepartment("商业化");
+//        r = runner.execute(express, context, null, false, false);
+//        System.out.println("################# employee: " + e.toString() + " res: " + r);
     }
 
     @Test
@@ -103,6 +116,29 @@ public class RuleEngineTest {
 
         Object result = script.run();
         System.out.println(result);
+
+    }
+
+    @Test
+    public void testMyRule() {
+        String exp = "(#{1} && #{3}) || (#{4} && #{5})";
+        Map<Integer, String> map  = new HashMap<>();
+        map.put(1, "规则1");
+        map.put(3, "规则3");
+        map.put(4, "规则4");
+        map.put(5, "规则5");
+
+        String pattern = "#\\{([0-9]*)\\}";
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(exp);
+        if (m.find( )) {
+            System.out.println("Found value: " + m.group(0) );
+            System.out.println("Found value: " + m.group(1) );
+            System.out.println("Found value: " + m.group(2) );
+            System.out.println("Found value: " + m.group(3) );
+        } else {
+            System.out.println("NO MATCH");
+        }
 
     }
 }

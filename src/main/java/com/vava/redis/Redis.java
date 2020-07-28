@@ -1,21 +1,37 @@
 package com.vava.redis;
 
+import java.util.Set;
+
 /**
  * @author Steve
  * Created on 2020-05
  */
 public class Redis {
-    static String get(String key) {
+    public String get(String key) {
         return null;
     }
 
-    static int setNx(String key, String val) {
+    public int setNx(String key, String val) {
         return 0;
     }
 
-    public static void set(String key, String ret) {
+    public void set(String key, String ret) {
     }
 
-    public static void del(String s) {
+    public void del(String s) {
+    }
+
+    public Set<String> zrange(String keyRuleChainQlExpressZSet, int i, int i1) {
+        return null;
+    }
+
+    public int setnx(String lockKey, Object existsVal) {
+        return 1;
+    }
+
+    public void expire(String lockKey, int ruleChainQlExpressZsetLockExpireSecs) {
+    }
+
+    public void zadd(String keyRuleChainQlExpressZSet, int order, String toString) {
     }
 }
