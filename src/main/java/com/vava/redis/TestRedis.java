@@ -25,20 +25,23 @@ public class TestRedis {
 
     private RuleChainMapper readRuleChainMapper;
 
+    private Redis redis = new Redis();
+    private Jedis jedis = new Jedis();
+
 
     /**
      * 如何解决缓存击穿问题
      * https://zhuanlan.zhihu.com/p/75588064
      */
     public String get(String key) throws InterruptedException {
-        String ret = Redis.get(key);
+        String ret = redis.get(key);
         if (ret == null) {
             // 缓存失效了
-            if (Redis.setNx("mutex" + key, "1") == 1) {
+            if (redis.setNx("mutex" + key, "1") == 1) {
                 // 获取锁成功 才能查数据库
                 ret = Db.query();
-                Redis.set(key, ret);
-                Redis.del("mutex" + key);
+                redis.set(key, ret);
+                redis.del("mutex" + key);
             } else {
                 Thread.sleep(100);
                 // 获取锁失败 歇一会再重新查
@@ -51,7 +54,6 @@ public class TestRedis {
     private List<RuleChain> getRuleChainByRuleChainIdOrderByOrder(String ruleChainId) throws InterruptedException {
         List<RuleChain> ruleChains;
         String keyRuleChainQlExpressZSet = RedisConstant.RULE_CHAIN_QL_EXPRESS_ZSET_PREFIX + ruleChainId;
-        Jedis jedis = new Jedis();
         Set<String> strRuleChainSet = jedis.get().zrange(keyRuleChainQlExpressZSet, 0, -1);
         if (CollectionUtils.isEmpty(strRuleChainSet)) {
             // 缓存失效了

@@ -379,4 +379,14 @@ public class LogicTest {
 
     }
 
+    @Test
+    public void test2() {
+        Map<String, Object> map = new HashMap<>();
+        map.computeIfAbsent("1223", k->new Object());
+        map.computeIfAbsent("1223", k->new Object());
+        map.computeIfAbsent("1222", k->new Object());
+        map.computeIfAbsent("1224", k->new Object());
+        System.out.println(map);
+    }
+
 }
