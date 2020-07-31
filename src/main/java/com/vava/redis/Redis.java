@@ -34,4 +34,7 @@ public class Redis {
 
     public void zadd(String keyRuleChainQlExpressZSet, int order, String toString) {
     }
+
+    public void setex(String key, int time, String val) {
+    }
 }
