@@ -125,6 +125,11 @@
             <version>3.0.4</version>
             <type>pom</type>
         </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>3.6.2</version>
+        </dependency>
 
     </dependencies>
 
