@@ -1,6 +1,7 @@
 package com.vava.test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.junit.Test;
 import com.ql.util.express.DefaultContext;
 import com.ql.util.express.ExpressRunner;
 import com.ql.util.express.InstructionSet;
+import com.vava.bean.UserScopeProto;
 import com.vava.qlexpress.ApplicationVisibleRule;
 import com.vava.qlexpress.Employee;
 import com.vava.qlexpress.QLExpression;
@@ -49,15 +51,15 @@ public class RuleEngineTest {
         InstructionSet instructionSet = runner.parseInstructionSet(express);
         System.out.println(instructionSet);
 
-        for (String i: outVarNames) {
+        for (String i : outVarNames) {
             System.out.println(i);
         }
         Object r = runner.execute(express, context, null, false, false);
-//        System.out.println("################# employee: " + e.toString() + " res: " + r);
+        //        System.out.println("################# employee: " + e.toString() + " res: " + r);
 
-//        e.setDepartment("商业化");
-//        r = runner.execute(express, context, null, false, false);
-//        System.out.println("################# employee: " + e.toString() + " res: " + r);
+        //        e.setDepartment("商业化");
+        //        r = runner.execute(express, context, null, false, false);
+        //        System.out.println("################# employee: " + e.toString() + " res: " + r);
     }
 
     @Test
@@ -122,7 +124,7 @@ public class RuleEngineTest {
     @Test
     public void testMyRule() {
         String exp = "(#{1} && #{3}) || (#{4} && #{5})";
-        Map<Integer, String> map  = new HashMap<>();
+        Map<Integer, String> map = new HashMap<>();
         map.put(1, "规则1");
         map.put(3, "规则3");
         map.put(4, "规则4");
@@ -131,14 +133,32 @@ public class RuleEngineTest {
         String pattern = "#\\{([0-9]*)\\}";
         Pattern r = Pattern.compile(pattern);
         Matcher m = r.matcher(exp);
-        if (m.find( )) {
-            System.out.println("Found value: " + m.group(0) );
-            System.out.println("Found value: " + m.group(1) );
-            System.out.println("Found value: " + m.group(2) );
-            System.out.println("Found value: " + m.group(3) );
+        if (m.find()) {
+            System.out.println("Found value: " + m.group(0));
+            System.out.println("Found value: " + m.group(1));
+            System.out.println("Found value: " + m.group(2));
+            System.out.println("Found value: " + m.group(3));
         } else {
             System.out.println("NO MATCH");
         }
 
+    }
+
+    @Test
+    public void testList() throws Exception {
+        String exp = "list = [\"1\",\"2\",\"3\"];"
+                + "for(i=0;i<userScopeProto.departmentIds.size();i++){\n"
+                + " if (userScopeProto.departmentIds.get(i) in list) return true; "
+                + "} \n"
+                + "return false";
+
+        ExpressRunner runner = new ExpressRunner();
+        DefaultContext<String, Object> context = new DefaultContext<>();
+        UserScopeProto userScopeProto = new UserScopeProto();
+        List<String> ids = Arrays.asList("1", "0");
+        userScopeProto.setDepartmentIds(ids);
+        context.put("userScopeProto", userScopeProto);
+        Object r = runner.execute(exp, context, null, true, false);
+        System.out.println("########" + r);
     }
 }
